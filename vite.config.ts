@@ -7,7 +7,7 @@ const manifestForPlugIn: Partial<VitePWAOptions> = {
   includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
   manifest: {
     name: 'SymptoBuddy',
-    short_name: 'sympto-buddy',
+    short_name: 'SymptoBuddy',
     description: 'I am an AI-based Symptom Checker',
     icons: [
       {

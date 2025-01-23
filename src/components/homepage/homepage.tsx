@@ -1,13 +1,18 @@
 import React from "react";
 import useStore from "../../store/store";
+import { useNavigate } from "react-router-dom"
 
 const Homepage: React.FC = () => {
+  const navigate = useNavigate();
   const tests = useStore((state) => state.tests);
+  const handleTestStart = () => {
+    navigate("/know-you");
+  };
 
   return (
     <div className="min-h-screen bg-white flex flex-col items-center p-6">
       {/* Header */}
-      <header className="w-full max-w-4xl mt-8 flex items-center justify-between px-4">
+      <header className="w-full max-w-4xl flex items-center justify-between px-4">
         {/* Logo */}
         <img
           src="/logo.jpg" // Replace with your logo file path
@@ -66,7 +71,7 @@ const Homepage: React.FC = () => {
 
       {/* Action Button */}
       <div className="w-full max-w-4xl px-4 fixed bottom-6">
-        <button className="w-full flex items-center justify-between bg-primary hover:bg-primary-dark text-white font-semibold py-4 px-6 rounded-lg shadow-lg">
+        <button className="w-full flex items-center justify-between bg-primary hover:bg-primary-dark text-white font-semibold py-4 px-6 rounded-lg shadow-lg" onClick={handleTestStart}>
           <span className="flex items-center text-lg lg:text-xl">
             Start a New Test
           </span>
