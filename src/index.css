@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Extend Tailwind's theme to include your custom colors */
+@layer utilities {
+  :root {
+    --primary: #009688; /* Teal */
+    --secondary: #4CAF50; /* Green */
+    --background: #f9f9f9; /* Light Gray */
+    --text: #333333; /* Dark Gray */
+    --highlight: #FF5722; /* Orange */
+  }
+}
+
+/* Example usage of custom colors */
+.bg-primary {
+  background-color: var(--primary);
+}
+.bg-secondary {
+  background-color: var(--secondary);
+}
+.text-primary {
+  color: var(--primary);
+}
+.text-secondary {
+  color: var(--secondary);
+}
+
+.bg-highlight {
+  background-color: var(--highlight);
+}
+
+.text-highlight {
+  color: var(--highlight);
+}
+
+.bg-background {
+  background-color: var(--background);
+}
+
+.text-dark {
+  color: var(--text);
+}
+
+/* Add hover states for the custom colors */
+.hover\:bg-primary:hover {
+  background-color: var(--primary);
+}
+
+.hover\:text-highlight:hover {
+  color: var(--highlight);
+}
