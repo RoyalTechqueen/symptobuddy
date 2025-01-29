@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import useStore from '../../store/store';
 import { useNavigate } from 'react-router-dom';
+import { Test } from '../../store/store'; // Import Test type
 
 const Homepage: React.FC = () => {
   const navigate = useNavigate();
@@ -91,22 +92,19 @@ const Homepage: React.FC = () => {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-6 rounded-lg max-w-lg w-full">
             <h3 className="text-2xl font-semibold mb-4">{selectedTest.name}</h3>
-            <p><strong>Date:</strong> {selectedTest.date}</p>
-            <p><strong>Time:</strong> {selectedTest.time}</p>
-            <p><strong>Symptoms:</strong></p>
-            <ul className="list-disc pl-5">
-              {selectedTest.symptoms.map((symptom, index) => (
-                <li key={index}>{symptom}</li>
+            <p className="mb-4">Test Date: {selectedTest.date}</p>
+            <p className="mb-4">Symptoms:</p>
+            <ul>
+              {selectedTest.symptoms.map((symptom, idx) => (
+                <li key={idx}>{symptom}</li>
               ))}
             </ul>
-            <div className="mt-4 text-right">
-              <button
-                className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark"
-                onClick={handleCloseModal}
-              >
-                OK
-              </button>
-            </div>
+            <button
+              className="mt-4 bg-primary hover:bg-primary-dark text-white py-2 px-4 rounded-lg"
+              onClick={handleCloseModal}
+            >
+              Close
+            </button>
           </div>
         </div>
       )}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import useStore from '../../store/store';
 import { useNavigate } from 'react-router-dom';
+import { Test } from '../../store/store'; // Import Test type
 
 // Helper function to calculate age from DOB
 const calculateAge = (dob: string): number => {
