@@ -1,30 +1,39 @@
-import  { create } from "zustand";
+import { create } from 'zustand';
 
-// Define the Test type
-export type Test = {
-  id: string; // Unique identifier for each test
-  name: string; // Name of the test
-  date: string; // Date when the test was created or scheduled
-};
+// Define the structure of a Test object
+interface Test {
+  id: string;
+  name: string;
+  date: string;
+  time: string;
+  symptoms: string[];
+}
 
-// Define the AppState type for Zustand
-export type AppState = {
-  tests: Test[]; // Array of tests
-  addTest: (newTest: Test) => void; // Function to add a new test
-  clearTests: () => void; // Function to clear all tests (optional utility)
-};
+// Define the state for your store
+interface StoreState {
+  user: {
+    firstName: string;
+    lastName: string;
+    dateOfBirth: string;
+    gender: string;
+  };
+  tests: Test[];  // Use the Test interface for the tests array
+  setUser: (firstName: string, lastName: string, dateOfBirth: string, gender: string) => void;
+  setTests: (test: Test) => void;  // Accept a single test object to be added to the tests array
+}
 
-// Create the Zustand store
-const useStore = create<AppState>((set) => ({
-  tests: [], // Initialize the tests array
-  addTest: (newTest) =>
-    set((state) => ({
-      tests: [...state.tests, newTest], // Add new test to the tests array
-    })),
-  clearTests: () =>
-    set(() => ({
-      tests: [], // Clear all tests
-    })),
+// Create the Zustand store with the appropriate state and actions
+const useStore = create<StoreState>((set) => ({
+  user: {
+    firstName: '',
+    lastName: '',
+    dateOfBirth: '',
+    gender: '',
+  },
+  tests: [],  // Initialize as an empty array of Test objects
+  setUser: (firstName, lastName, dateOfBirth, gender) =>
+    set({ user: { firstName, lastName, dateOfBirth, gender } }),
+  setTests: (test) => set((state) => ({ tests: [...state.tests, test] })),  // Add the new test to the existing array
 }));
 
 export default useStore;

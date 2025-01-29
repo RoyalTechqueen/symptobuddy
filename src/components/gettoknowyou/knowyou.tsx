@@ -1,10 +1,18 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import useStore from '../../store/store';
+import { useNavigate } from 'react-router-dom';
 
 const KnowYou: React.FC = () => {
   const navigate = useNavigate();
+  const { setUser } = useStore();
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [dateOfBirth, setDateOfBirth] = useState('');
+  const [gender, setGender] = useState('Male');
+
   const handleHome = () => {
-    navigate("/homepage");
+    setUser(firstName, lastName, dateOfBirth, gender); // Save to store
+    navigate('/homepage'); // Redirect to NewTest page
   };
 
   return (
@@ -28,6 +36,8 @@ const KnowYou: React.FC = () => {
           <label className="block text-sm font-medium text-gray-700">First Name</label>
           <input
             type="text"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
             placeholder="Abdulmuiz"
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
           />
@@ -36,6 +46,8 @@ const KnowYou: React.FC = () => {
           <label className="block text-sm font-medium text-gray-700">Last Name</label>
           <input
             type="text"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
             placeholder="Sanusi"
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
           />
@@ -44,12 +56,16 @@ const KnowYou: React.FC = () => {
           <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
           <input
             type="date"
+            value={dateOfBirth}
+            onChange={(e) => setDateOfBirth(e.target.value)}
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
           />
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700">Gender</label>
           <select
+            value={gender}
+            onChange={(e) => setGender(e.target.value)}
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
           >
             <option>Male</option>
@@ -57,11 +73,11 @@ const KnowYou: React.FC = () => {
           </select>
         </div>
         <button
-          type="submit"
+          type="button"
           onClick={handleHome}
           className="w-full bg-primary text-white py-2 rounded-md hover:bg-green-600 focus:ring focus:ring-green-300"
         >
-          Go to home
+          Go to Home
         </button>
       </form>
     </div>
