@@ -2,65 +2,68 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 const KnowYou: React.FC = () => {
-  const [state, setState] = React.useState<{ age: string; gender: string }>({
-    age: "",
-    gender: "",
-  });
-
-  const navigate = useNavigate(); // Initialize useNavigate hook
-
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    setState((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const { name, value } = event.target;
-    setState((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = () => {
-    // Navigate to homepage upon form submission
-    navigate("/home"); // Redirect to the homepage
+  const navigate = useNavigate();
+  const handleHome = () => {
+    navigate("/homepage");
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-primary">
-      <div className="bg-white p-8 rounded-lg  w-96">
-        <h1 className="text-2xl font-semibold text-center text-gray-700 mb-6">Get to Know You</h1>
+    <div className="min-h-screen bg-green-100 flex flex-col items-center justify-center p-6">
+      <div className="w-full max-w-4xl flex flex-col items-center justify-center px-4 mt-4">
+        <img
+          src="logo.jpg" // Replace with your logo path
+          alt="SymptoBuddy Logo"
+          className="w-32 h-32 sm:w-16 sm:h-16 lg:w-40 lg:h-40"
+        />
+      </div>
 
-        <div className="mb-4">
+      <div className="w-full max-w-4xl mt-10 px-4 text-center">
+        <p className="text-lg sm:text-xl text-gray-700">
+          Welcome to SymptoBuddy where you get instant diagnosis for common ailments
+        </p>
+      </div>
+
+      <form className="w-full max-w-4xl mt-8 px-4 space-y-4 flex-grow">
+        <div>
+          <label className="block text-sm font-medium text-gray-700">First Name</label>
           <input
-            name="age"
             type="text"
-            placeholder="Enter your age"
-            value={state.age}
-            onChange={handleInputChange}
-            className="w-full p-3 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+            placeholder="Abdulmuiz"
+            className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
           />
         </div>
-
-        <div className="mb-6">
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Last Name</label>
+          <input
+            type="text"
+            placeholder="Sanusi"
+            className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
+          <input
+            type="date"
+            className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Gender</label>
           <select
-            name="gender"
-            value={state.gender}
-            onChange={handleSelectChange}
-            className="w-full p-3 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+            className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
           >
-            <option value="">Select Gender</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
+            <option>Male</option>
+            <option>Female</option>
           </select>
         </div>
-
         <button
-          onClick={handleSubmit} // Trigger handleSubmit on click
-          className="w-full bg-primary text-white p-3 rounded-md hover:bg-green-700 transition duration-200"
-          disabled={!state.age || !state.gender}
+          type="submit"
+          onClick={handleHome}
+          className="w-full bg-primary text-white py-2 rounded-md hover:bg-green-600 focus:ring focus:ring-green-300"
         >
-          Submit
+          Go to home
         </button>
-      </div>
+      </form>
     </div>
   );
 };

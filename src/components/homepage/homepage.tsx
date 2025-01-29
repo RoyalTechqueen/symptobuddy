@@ -6,25 +6,19 @@ const Homepage: React.FC = () => {
   const navigate = useNavigate();
   const tests = useStore((state) => state.tests);
   const handleTestStart = () => {
-    navigate("/know-you");
+    navigate("/test");
   };
 
   return (
     <div className="min-h-screen bg-white flex flex-col items-center p-6">
       {/* Header */}
-      <header className="w-full max-w-4xl flex items-center justify-between px-4">
-        {/* Logo */}
+      <div className="w-full max-w-4xl flex items-center justify-center px-4 mt-4">  
         <img
           src="/logo.jpg" // Replace with your logo file path
           alt="SymptoBuddy Logo"
-          className="w-20 h-20 sm:w-12 sm:h-12 lg:w-32 lg:h-32"
+          className="w-32 h-32 sm:w-16 sm:h-16 lg:w-40 lg:h-40"
         />
-
-        {/* App Name */}
-        <h1 className="text-2xl sm:text-md lg:text-5xl font-bold text-primary text-center flex-1">
-          SymptoBuddy
-        </h1>
-      </header>
+      </div>
 
       {/* Intro Section */}
       <div className="w-full max-w-4xl mt-10 px-4 text-center">
