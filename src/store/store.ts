@@ -1,7 +1,8 @@
+// store.ts
 import { create } from 'zustand';
 
 // Define the structure of a Test object
-interface Test {
+export interface Test {
   id: string;
   name: string;
   date: string;
@@ -33,7 +34,7 @@ const useStore = create<StoreState>((set) => ({
   tests: [],  // Initialize as an empty array of Test objects
   setUser: (firstName, lastName, dateOfBirth, gender) =>
     set({ user: { firstName, lastName, dateOfBirth, gender } }),
-  setTests: (test) => set((state) => ({ tests: [...state.tests, test] })),  // Add the new test to the existing array
+  setTests: (test) => set((state) => ({ tests: [...state.tests, test] })),
 }));
 
 export default useStore;

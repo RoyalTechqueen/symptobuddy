@@ -12,7 +12,7 @@ const Homepage: React.FC = () => {
     if (tests.length > 0) {
       navigate("/testresult"); // Navigate to test results page if tests are available
     }
-  }, [tests.length, navigate]);
+  }, [tests.length, navigate, tests]); // Include 'tests' in the dependency array
 
   const handleTestStart = () => {
     navigate("/test");

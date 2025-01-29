@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import useStore from '../../store/store';
+import useStore, { Test } from '../../store/store'; // Import Test type here
 import { useNavigate } from 'react-router-dom';
-import { Test } from '../../store/store'; // Import Test type
 
 // Helper function to calculate age from DOB
 const calculateAge = (dob: string): number => {
@@ -87,7 +86,7 @@ const TestResultsPage: React.FC = () => {
                 <div>
                   <p className="font-semibold text-gray-700">Symptoms:</p>
                   <ul className="list-disc pl-5">
-                    {test.symptoms.map((symptom, idx) => (
+                    {test.symptoms.map((symptom: string, idx: number) => (  // Properly typed `symptom` and `idx`
                       <li key={idx} className="text-gray-600">{symptom}</li>
                     ))}
                   </ul>
@@ -113,7 +112,7 @@ const TestResultsPage: React.FC = () => {
             </div>
             <p><strong>Symptoms:</strong></p>
             <ul className="list-disc pl-5 mb-4">
-              {selectedTest.symptoms.map((symptom, idx) => (
+              {selectedTest.symptoms.map((symptom: string, idx: number) => (  // Properly typed `symptom` and `idx`
                 <li key={idx}>{symptom}</li>
               ))}
             </ul>
