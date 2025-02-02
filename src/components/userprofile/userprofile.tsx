@@ -1,18 +1,36 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import useStore from '../../store/store';
 import { useNavigate } from 'react-router-dom';
 
-const KnowYou: React.FC = () => {
+const UserProfile: React.FC = () => {
   const navigate = useNavigate();
-  const { setUser } = useStore();
+  const { setUser, user, loadUserProfile } = useStore();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
   const [gender, setGender] = useState('Male');
 
+  // Load user profile from store (IndexedDB)
+  useEffect(() => {
+    const loadProfile = async () => {
+      await loadUserProfile(); // Load from IndexedDB
+      const storedUser = user; // Retrieve from the store
+      if (storedUser) {
+        setFirstName(storedUser.firstName);
+        setLastName(storedUser.lastName);
+        setDateOfBirth(storedUser.dateOfBirth);
+        setGender(storedUser.gender);
+        // Redirect to TestResultsPage if user profile already exists
+        navigate('/testresult');
+      }
+    };
+
+    loadProfile();
+  }, [loadUserProfile, user, navigate]);
+
   const handleHome = () => {
     setUser(firstName, lastName, dateOfBirth, gender); // Save to store
-    navigate('/homepage'); // Redirect to NewTest page
+    navigate('/homepage'); // Redirect to homepage (first login)
   };
 
   return (
@@ -27,7 +45,7 @@ const KnowYou: React.FC = () => {
 
       <div className="w-full max-w-4xl mt-10 px-4 text-center">
         <p className="text-lg sm:text-xl text-gray-700">
-          Welcome to SymptoBuddy where you get instant diagnosis for common ailments
+          Welcome to SymptoBuddy, where you get instant diagnosis for common ailments.
         </p>
       </div>
 
@@ -84,4 +102,4 @@ const KnowYou: React.FC = () => {
   );
 };
 
-export default KnowYou;
+export default UserProfile;

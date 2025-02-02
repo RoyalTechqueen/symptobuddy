@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import useStore, { Test } from '../../store/store'; // Import Test type here
 import { useNavigate } from 'react-router-dom';
 
@@ -20,9 +20,14 @@ const TestResultsPage: React.FC = () => {
   const navigate = useNavigate();
   const tests = useStore((state) => state.tests);
   const user = useStore((state) => state.user);
-  
+  const loadTests = useStore((state) => state.loadTests);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTest, setSelectedTest] = useState<Test | null>(null);
+
+  useEffect(() => {
+    loadTests(); // Load tests when component mounts
+  }, [loadTests]);
 
   const handleTestStart = () => {
     navigate("/test"); 
