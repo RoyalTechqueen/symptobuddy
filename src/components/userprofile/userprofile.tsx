@@ -9,24 +9,29 @@ const UserProfile: React.FC = () => {
   const [lastName, setLastName] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
   const [gender, setGender] = useState('Male');
+  const [loading, setLoading] = useState(true); // Add loading state
 
   // Load user profile from store (IndexedDB)
   useEffect(() => {
     const loadProfile = async () => {
       await loadUserProfile(); // Load from IndexedDB
-      const storedUser = user; // Retrieve from the store
-      if (storedUser) {
-        setFirstName(storedUser.firstName);
-        setLastName(storedUser.lastName);
-        setDateOfBirth(storedUser.dateOfBirth);
-        setGender(storedUser.gender);
-        // Redirect to TestResultsPage if user profile already exists
-        navigate('/testresult');
-      }
+      setLoading(false); // Set loading to false after fetching data
     };
-
     loadProfile();
-  }, [loadUserProfile, user, navigate]);
+  }, [loadUserProfile]);
+
+  // Set user state only after loading completes
+  useEffect(() => {
+    if (!loading && user?.firstName) {
+      setFirstName(user.firstName);
+      setLastName(user.lastName);
+      setDateOfBirth(user.dateOfBirth);
+      setGender(user.gender);
+      
+      // Redirect only if user profile is fully loaded
+      navigate('/testresult');
+    }
+  }, [user, loading, navigate]);
 
   const handleHome = () => {
     setUser(firstName, lastName, dateOfBirth, gender); // Save to store
