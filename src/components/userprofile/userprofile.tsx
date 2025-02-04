@@ -9,43 +9,40 @@ const UserProfile: React.FC = () => {
   const [lastName, setLastName] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
   const [gender, setGender] = useState('Male');
-  const [loading, setLoading] = useState(true); // Add loading state
+  const [loading, setLoading] = useState(true);
+  const [isReturningUser, setIsReturningUser] = useState(false);
 
-  // Load user profile from store (IndexedDB)
   useEffect(() => {
     const loadProfile = async () => {
-      await loadUserProfile(); // Load from IndexedDB
-      setLoading(false); // Set loading to false after fetching data
+      await loadUserProfile();
+      setLoading(false);
     };
     loadProfile();
   }, [loadUserProfile]);
 
-  // Set user state only after loading completes
   useEffect(() => {
     if (!loading && user?.firstName) {
       setFirstName(user.firstName);
       setLastName(user.lastName);
       setDateOfBirth(user.dateOfBirth);
       setGender(user.gender);
-      
-      // Redirect only if user profile is fully loaded
-      navigate('/testresult');
+      setIsReturningUser(true);
     }
-  }, [user, loading, navigate]);
+  }, [user, loading]);
 
-  const handleHome = () => {
-    setUser(firstName, lastName, dateOfBirth, gender); // Save to store
-    navigate('/homepage'); // Redirect to homepage (first login)
+  const handleSubmit = () => {
+    setUser(firstName, lastName, dateOfBirth, gender);
+    if (isReturningUser) {
+      navigate('/testresult');
+    } else {
+      navigate('/homepage');
+    }
   };
 
   return (
     <div className="min-h-screen bg-green-100 flex flex-col items-center justify-center p-6">
       <div className="w-full max-w-4xl flex flex-col items-center justify-center px-4 mt-4">
-        <img
-          src="logo.jpg" // Replace with your logo path
-          alt="SymptoBuddy Logo"
-          className="w-32 h-32 sm:w-16 sm:h-16 lg:w-40 lg:h-40"
-        />
+        <img src="logo.jpg" alt="SymptoBuddy Logo" className="w-32 h-32 sm:w-16 sm:h-16 lg:w-40 lg:h-40" />
       </div>
 
       <div className="w-full max-w-4xl mt-10 px-4 text-center">
@@ -97,10 +94,10 @@ const UserProfile: React.FC = () => {
         </div>
         <button
           type="button"
-          onClick={handleHome}
+          onClick={handleSubmit}
           className="w-full bg-primary text-white py-2 rounded-md hover:bg-green-600 focus:ring focus:ring-green-300"
         >
-          Go to Home
+          {isReturningUser ? 'Go to Home' : 'Go to Home'}
         </button>
       </form>
     </div>
