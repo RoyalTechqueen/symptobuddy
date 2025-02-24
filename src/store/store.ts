@@ -1,9 +1,15 @@
-import { create } from 'zustand';
-import { saveUserProfile, getUserProfile, saveTestHistory, getTestHistory } from './indexedDBUtils';
+import { create } from "zustand";
+import {
+  saveUserProfile,
+  getUserProfile,
+  saveTestHistory,
+  getTestHistory,
+} from "./db";
 
 // Define the structure of a Test object
 export interface Test {
   id: string;
+  userId: string; // 🔹 Associate tests with a specific user
   name: string;
   date: string;
   time: string;
@@ -21,49 +27,63 @@ export interface UserProfile {
 
 // Define the state for your store
 interface StoreState {
-  user: UserProfile; // Use the UserProfile interface for the user
-  tests: Test[]; // Use the Test interface for the tests array
+  user: UserProfile;
+  tests: Test[];
   setUser: (firstName: string, lastName: string, dateOfBirth: string, gender: string) => void;
-  setTests: (test: Test) => void; // Accept a single test object to be added to the tests array
-  loadUserProfile: () => void; // Function to load the user profile from IndexedDB
-  loadTests: () => void; // Function to load tests from IndexedDB
+  setTests: (test: Omit<Test, "id" | "userId">) => void; // Omit ID and userId since they are auto-generated
+  loadUserProfile: () => Promise<void>;
+  loadTests: () => Promise<void>;
 }
 
 // Create the Zustand store
-const useStore = create<StoreState>((set) => ({
+const useStore = create<StoreState>((set, get) => ({
   user: {
-    id: '',
-    firstName: '',
-    lastName: '',
-    dateOfBirth: '',
-    gender: '',
+    id: "user",
+    firstName: "",
+    lastName: "",
+    dateOfBirth: "",
+    gender: "",
   },
   tests: [],
 
   // Load user profile from IndexedDB
   loadUserProfile: async () => {
-    const userData = await getUserProfile();
-    if (userData) {
-      set({ user: userData });
+    try {
+      const userData = await getUserProfile();
+      if (userData) {
+        set({ user: userData });
+      }
+    } catch (error) {
+      console.error("Error loading user profile:", error);
     }
   },
 
-  // Load test history from IndexedDB
+  // Load only tests for the current user
   loadTests: async () => {
-    const allTests = await getTestHistory();
-    set({ tests: allTests });
+    try {
+      const { user } = get();
+      if (!user.id) return;
+      const userTests = await getTestHistory(user.id); // 🔹 Pass user.id
+      set({ tests: userTests });
+    } catch (error) {
+      console.error("Error loading tests:", error);
+    }
   },
 
   // Save user profile to IndexedDB
   setUser: (firstName, lastName, dateOfBirth, gender) => {
-    set({ user: { id: 'profile', firstName, lastName, dateOfBirth, gender } });
-    saveUserProfile({ id: 'profile', firstName, lastName, dateOfBirth, gender }); // Store in IndexedDB
+    const userProfile = { id: "user", firstName, lastName, dateOfBirth, gender };
+    set({ user: userProfile });
+    saveUserProfile(userProfile);
   },
 
-  // Save a new test to IndexedDB
+  // Save a new test with the current user.id
   setTests: (test) => {
-    set((state) => ({ tests: [...state.tests, test] }));
-    saveTestHistory(test); // Store in IndexedDB
+    const { user } = get();
+    if (!user.id) return;
+    const newTest = { id: Date.now().toString(), userId: user.id, ...test }; // 🔹 Include userId
+    set((state) => ({ tests: [...state.tests, newTest] }));
+    saveTestHistory(test, user.id); // 🔹 Pass user.id
   },
 }));
 
