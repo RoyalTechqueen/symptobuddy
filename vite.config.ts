@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: 'autoUpdate', // Ensures SW updates automatically
+      registerType: 'prompt',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
       manifest: {
         name: 'SymptoBuddy',
@@ -23,47 +23,40 @@ export default defineConfig({
             src: '/android-chrome-192x192.png',
             sizes: '192x192',
             type: 'image/png',
-            purpose: 'any',
           },
           {
             src: '/android-chrome-512x512.png',
             sizes: '512x512',
             type: 'image/png',
-            purpose: 'any',
           },
           {
             src: '/apple-touch-icon.png',
             sizes: '180x180',
             type: 'image/png',
-            purpose: 'any',
           },
           {
             src: '/maskable_icon.png',
             sizes: '512x512',
             type: 'image/png',
-            purpose: 'any maskable',
+            purpose: 'maskable',
           },
         ],
-      },
-      workbox: {
-        cleanupOutdatedCaches: true, // Removes old caches
-        globPatterns: ['**/*.{js,css,html,png,ico,webmanifest}'], // Ensures all necessary assets are cached
-        runtimeCaching: [
+        screenshots: [
           {
-            urlPattern: /^https:\/\/your-api-url\.com\/.*$/, // Cache API responses if needed
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'api-cache',
-              expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24, // 1 day
-              },
-            },
+            src: '/screenshot-wide.png',
+            sizes: '1920x1080',
+            type: 'image/png',
+            form_factor: 'wide',
           },
+          {
+            src: '/screenshot-mobile.png',
+            sizes: '1080x1920',
+            type: 'image/png',
+          }
         ],
       },
       devOptions: {
-        enabled: true, // Enables PWA in development
+        enabled: true,
         type: 'module',
       },
     }),

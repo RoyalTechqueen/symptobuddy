@@ -2,18 +2,26 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getUserProfile, saveUserProfile } from "../../store/db"; // Import IndexedDB functions
 
+// Define UserProfile type
+interface UserProfile {
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  gender: string;
+}
+
 const ProfilePage: React.FC = () => {
   const navigate = useNavigate();
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [dateOfBirth, setDateOfBirth] = useState("");
-  const [gender, setGender] = useState("Male");
-  const [isReturningUser, setIsReturningUser] = useState(false);
+  const [firstName, setFirstName] = useState<string>("");
+  const [lastName, setLastName] = useState<string>("");
+  const [dateOfBirth, setDateOfBirth] = useState<string>("");
+  const [gender, setGender] = useState<"Male" | "Female">("Male");
+  const [isReturningUser, setIsReturningUser] = useState<boolean>(false);
 
-  // Check if user profile exists (but don't pre-fill fields)
+  // Check if user profile exists
   useEffect(() => {
     const checkProfile = async () => {
-      const profile = await getUserProfile();
+      const profile: UserProfile | null = await getUserProfile();
       if (profile) {
         setIsReturningUser(true);
       }
@@ -28,7 +36,7 @@ const ProfilePage: React.FC = () => {
     }
 
     // Get existing profile
-    const existingProfile = await getUserProfile();
+    const existingProfile: UserProfile | null = await getUserProfile();
 
     // If a different user is detected, clear old data
     if (
@@ -70,7 +78,9 @@ const ProfilePage: React.FC = () => {
           <input
             type="text"
             value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setFirstName(e.target.value)
+            }
             placeholder="John"
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
           />
@@ -82,7 +92,9 @@ const ProfilePage: React.FC = () => {
           <input
             type="text"
             value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setLastName(e.target.value)
+            }
             placeholder="Doe"
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
           />
@@ -94,7 +106,9 @@ const ProfilePage: React.FC = () => {
           <input
             type="date"
             value={dateOfBirth}
-            onChange={(e) => setDateOfBirth(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setDateOfBirth(e.target.value)
+            }
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
           />
         </div>
@@ -104,7 +118,9 @@ const ProfilePage: React.FC = () => {
           </label>
           <select
             value={gender}
-            onChange={(e) => setGender(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+              setGender(e.target.value as "Male" | "Female")
+            }
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
           >
             <option>Male</option>
