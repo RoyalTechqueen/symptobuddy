@@ -45,8 +45,26 @@ export default defineConfig({
           },
         ],
       },
+      workbox: {
+        cleanupOutdatedCaches: true, // Removes old caches
+        globPatterns: ['**/*.{js,css,html,png,ico,webmanifest}'], // Ensures all necessary assets are cached
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/your-api-url\.com\/.*$/, // Cache API responses if needed
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'api-cache',
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 60 * 24, // 1 day
+              },
+            },
+          },
+        ],
+      },
       devOptions: {
-        enabled: true, // Enable PWA in development
+        enabled: true, // Enables PWA in development
+        type: 'module',
       },
     }),
   ],
