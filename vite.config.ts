@@ -11,7 +11,7 @@ export default defineConfig({
       manifest: {
         name: 'SymptoBuddy',
         short_name: 'SymptoBuddy',
-        description: 'I am an AI-based Symptom Checker',
+        description: 'I am an AI-based Symptom prediction System',
         theme_color: '#171717',
         background_color: '#009688',
         display: 'standalone',
