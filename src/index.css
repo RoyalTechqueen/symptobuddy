@@ -7,7 +7,9 @@
   margin: 0;
   padding: 0;
 }
-
+input[type="checkbox"].peer:checked {
+  accent-color: green; /* This changes the checkbox to green when checked */
+}
 /* Extend Tailwind's theme to include your custom colors */
 @layer utilities {
   :root {

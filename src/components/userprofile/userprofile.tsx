@@ -46,7 +46,7 @@ const ProfilePage: React.FC = () => {
         existingProfile.dateOfBirth !== dateOfBirth)
     ) {
       await saveUserProfile({ firstName, lastName, dateOfBirth, gender }); // Save new user
-      navigate("/homepage"); // Redirect new user to homepage
+      navigate("/test"); // Redirect new user to homepage
     } else {
       await saveUserProfile({ firstName, lastName, dateOfBirth, gender });
       navigate("/testresult"); // Redirect existing user to test results
@@ -55,19 +55,14 @@ const ProfilePage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-green-100 flex flex-col items-center justify-center p-6">
-      <div className="w-full max-w-4xl flex flex-col items-center justify-center px-4 mt-4">
+      <div className="w-full max-w-4xl flex items-center justify-center px-4 mt-4">
         <img
-          src="logo.jpg"
+          src="/logo.jpg"
           alt="SymptoBuddy Logo"
-          className="w-32 h-32 sm:w-16 sm:h-16 lg:w-40 lg:h-40"
+          className="w-48 h-48 sm:w-36 sm:h-36 lg:w-52 lg:h-52"
         />
       </div>
 
-      <div className="w-full max-w-4xl mt-10 px-4 text-center">
-        <p className="text-lg sm:text-xl text-gray-700">
-          Welcome to SymptoBuddy, where you get instant diagnosis for common ailments.
-        </p>
-      </div>
 
       {/* Form to collect user information */}
       <form className="w-full max-w-4xl mt-8 px-4 space-y-4 flex-grow">
@@ -132,7 +127,7 @@ const ProfilePage: React.FC = () => {
           onClick={handleSubmit}
           className="w-full bg-primary text-white py-2 rounded-md hover:bg-green-600 focus:ring focus:ring-green-300"
         >
-          {isReturningUser ? "Go to Home" : "Go to Home"}
+          {isReturningUser ? "Begin Test" : "Begin Test"}
         </button>
       </form>
     </div>
