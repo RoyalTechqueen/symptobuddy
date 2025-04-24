@@ -101,7 +101,7 @@ const NewTest: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-green-100 flex flex-col items-center justify-center p-6">
+    <div className="min-h-screen bg-green-100 flex flex-col items-center justify-center">
         <div className="w-full max-w-4xl flex items-center justify-center px-4 mt-4">
         <img
           src="/logo.jpg"
@@ -112,9 +112,9 @@ const NewTest: React.FC = () => {
       <header className="w-full max-w-4xl flex items-center justify-between px-4 mt-4">
         <div
           onClick={() => navigate("/testresult")}
-          className="cursor-pointer bg-primary p-3 rounded-full shadow-md hover:bg-green-600"
+          className="cursor-pointer bg-primary p-2 rounded-full shadow-md hover:bg-green-600"
         >
-          <FaAngleLeft size={24} />
+          <FaAngleLeft size={12} />
         </div>
         <div className="ml-auto bg-green-600 text-white p-2 rounded-md flex items-center space-x-2">
           <p>{currentDate}</p>
@@ -122,9 +122,9 @@ const NewTest: React.FC = () => {
         </div>
       </header>
 
-      <h1 className="text-3xl font-bold text-center mx-auto">Start New Test</h1>
+      <h1 className="sm:text-3xl text-lg  font-bold text-center mx-auto">Start New Test</h1>
 
-      <form className="w-full max-w-4xl mt-8 px-4 space-y-4 mx-auto">
+      <form className="w-full max-w-4xl mt-2 px-4 space-y-4 mx-auto">
         <div>
           <div className="mt-2 bg-white border border-gray-300 rounded-md shadow-lg p-3">
             {symptomsList.map((symptom) => (

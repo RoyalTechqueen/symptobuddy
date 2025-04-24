@@ -53,7 +53,7 @@ const TestResultsPage: React.FC = () => {
     : [];
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center p-6">
+    <div className="min-h-screen bg-white flex flex-col items-center">
       {/* Header */}
       <div className="w-full max-w-4xl flex items-center justify-between bg-primary text-white p-4">
         <div className="flex items-center">

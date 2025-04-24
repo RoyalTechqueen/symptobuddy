@@ -54,7 +54,7 @@ const ProfilePage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-green-100 flex flex-col items-center justify-center p-6">
+    <div className="min-h-screen bg-green-100 flex flex-col items-center justify-center">
       <div className="w-full max-w-4xl flex items-center justify-center px-4 mt-4">
         <img
           src="/logo.jpg"
