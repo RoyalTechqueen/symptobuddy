@@ -39,10 +39,10 @@ const Homepage: React.FC = () => {
 
       {/* Welcome Text */}
       <div className="w-full max-w-4xl mt-10 px-4 text-center">
-  <p className="text-2xl sm:text-3xl md:text-4xl text-gray-700 font-semibold leading-snug">
+  <p className="text-lg sm:text-xl md:text-3xl text-gray-700 font-semibold leading-snug">
     Welcome to SymptoBuddy, your trusted companion for predicting  common illnesses!
   </p>
-  <p className="text-lg sm:text-xl text-gray-600 mt-4">
+  <p className="text-md sm:text-xl text-gray-600 mt-4">
     Get quick insights on your symptoms and take control of your health with ease.
   </p>
 </div>
