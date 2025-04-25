@@ -27,6 +27,7 @@ const TestResultsPage: React.FC = () => {
   const tests = useStore((state) => state.tests);
   const loadUserProfile = useStore((state) => state.loadUserProfile);
   const loadTests = useStore((state) => state.loadTests);
+  const deleteTest = useStore((state) => state.deleteTest); // Assuming you have a deleteTest method in your store
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTest, setSelectedTest] = useState<Test | null>(null);
@@ -36,21 +37,21 @@ const TestResultsPage: React.FC = () => {
     loadTests();
   }, [loadUserProfile, loadTests]);
 
-  // Debugging
-  useEffect(() => {
-    console.log("User ID:", user?.id);
-    console.log("User Profile:", user);
-    console.log("All Tests:", tests);
-    console.log(
-      "Filtered Tests:",
-      tests.filter((test) => test.userId === user?.id)
-    );
-  }, [user, tests]);
-
   // Filter tests for the logged-in user only
   const userTests = user?.id
     ? tests.filter((test) => test.userId && test.userId === user.id)
     : [];
+
+  const handleDeleteTest = () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this test history?"
+    );
+    if (confirmed && selectedTest?.id) {
+      deleteTest(selectedTest.id); // Delete the test using Zustand store action
+      setIsModalOpen(false); // Close the modal after deletion
+      setSelectedTest(null); // Clear the selected test
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white flex flex-col items-center">
@@ -125,46 +126,50 @@ const TestResultsPage: React.FC = () => {
       </div>
 
       {/* Modal for Test Details */}
-      {/* Modal for Test Details */}
-{isModalOpen && selectedTest && (
-  <div className="fixed inset-0 flex justify-center items-center bg-gray-900 bg-opacity-50 z-50">
-    <div className="bg-white p-8 rounded-2xl max-w-lg w-full shadow-lg">
-      <h3 className="text-2xl font-bold text-center text-green-700 mb-4">
-        Predicted Condition
-      </h3>
-      <p className="text-2xl font-extrabold text-center text-black mb-6">
-        {selectedTest.prediction || "N/A"}
-      </p>
+      {isModalOpen && selectedTest && (
+        <div className="fixed inset-0 flex justify-center items-center bg-gray-900 bg-opacity-50 z-50">
+          <div className="bg-white p-8 rounded-2xl max-w-lg w-full shadow-lg">
+            <h3 className="text-2xl font-bold text-center text-green-700 mb-4">
+              Predicted Condition
+            </h3>
+            <p className="text-2xl font-extrabold text-center text-black mb-6">
+              {selectedTest.prediction || "N/A"}
+            </p>
 
-      <div className="flex justify-between text-sm text-gray-700 mb-4">
-        <p><strong>Date:</strong> {selectedTest.date}</p>
-        <p><strong>Time:</strong> {selectedTest.time}</p>
-      </div>
+            <div className="flex justify-between text-sm text-gray-700 mb-4">
+              <p><strong>Date:</strong> {selectedTest.date}</p>
+              <p><strong>Time:</strong> {selectedTest.time}</p>
+            </div>
 
-      <div className="mb-4">
-        <p className="font-semibold mb-2">Symptoms Entered:</p>
-        <ul className="list-disc pl-5 text-gray-700">
-          {selectedTest.symptoms.map((symptom, idx) => (
-            <li key={idx}>{symptom}</li>
-          ))}
-        </ul>
-      </div>
+            <div className="mb-4">
+              <p className="font-semibold mb-2">Symptoms Entered:</p>
+              <ul className="list-disc pl-5 text-gray-700">
+                {selectedTest.symptoms.map((symptom, idx) => (
+                  <li key={idx}>{symptom}</li>
+                ))}
+              </ul>
+            </div>
 
-      <div className="flex justify-center">
-        <button
-          className="bg-secondary hover:bg-secondary-dark text-white py-2 px-6 rounded-md"
-          onClick={() => {
-            setIsModalOpen(false);
-            setSelectedTest(null);
-          }}
-        >
-          OK
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
+            <div className="flex justify-center space-x-4">
+              <button
+                className="bg-secondary hover:bg-secondary-dark text-white py-2 px-6 rounded-md"
+                onClick={() => {
+                  setIsModalOpen(false);
+                  setSelectedTest(null);
+                }}
+              >
+                OK
+              </button>
+              <button
+                className="bg-red-600 hover:bg-red-700 text-white py-2 px-6 rounded-md"
+                onClick={handleDeleteTest}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

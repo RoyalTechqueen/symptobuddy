@@ -74,3 +74,22 @@ export const getTestHistory = async (userId: string): Promise<Test[]> => {
     return [];
   }
 };
+
+// Delete a Test from IndexedDB
+export const deleteTestHistory = async (testId: string) => {
+  try {
+    const db = await dbPromise;
+    const transaction = db.transaction("testHistory", "readwrite");
+    const store = transaction.objectStore("testHistory");
+
+    // Delete the test with the specified testId
+    store.delete(testId);
+
+    return new Promise((resolve, reject) => {
+      transaction.oncomplete = () => resolve(true);
+      transaction.onerror = (err) => reject(err);
+    });
+  } catch (error) {
+    console.error("Failed to delete test history:", error);
+  }
+};

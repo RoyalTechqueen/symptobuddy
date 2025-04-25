@@ -4,6 +4,7 @@ import {
   getUserProfile,
   saveTestHistory,
   getTestHistory,
+  deleteTestHistory, // Function to delete test history
 } from "./db";
 
 // Define the structure of a Test object
@@ -32,6 +33,7 @@ interface StoreState {
   tests: Test[];
   setUser: (firstName: string, lastName: string, dateOfBirth: string, gender: string) => void;
   setTests: (test: Omit<Test, "id" | "userId">) => void; // Omit ID and userId since they are auto-generated
+  deleteTest: (id: string) => void; // 🔹 Add the deleteTest method
   loadUserProfile: () => Promise<void>;
   loadTests: () => Promise<void>;
 }
@@ -85,6 +87,18 @@ const useStore = create<StoreState>((set, get) => ({
     const newTest = { id: Date.now().toString(), userId: user.id, ...test }; // 🔹 Include userId
     set((state) => ({ tests: [...state.tests, newTest] }));
     saveTestHistory(test, user.id); // 🔹 Pass user.id
+  },
+
+  // Delete a test by id
+  deleteTest: (id: string) => {
+    const { user } = get();
+    if (!user.id) return;
+    // Remove the test from the local state
+    set((state) => ({
+      tests: state.tests.filter((test) => test.id !== id),
+    }));
+    // Delete it from IndexedDB (only pass the test id)
+    deleteTestHistory(id); // Only passing the test id now
   },
 }));
 
