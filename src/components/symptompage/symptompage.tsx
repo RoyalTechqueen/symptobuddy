@@ -159,8 +159,12 @@ const NewTest: React.FC = () => {
       </form>
 
       {showModal && (
-  <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
+  <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50 p-3">
     <div className="bg-white p-6 rounded-2xl w-full max-w-lg shadow-lg">
+    <div className="text-black mb-2 flex items-center justify-between">
+          <p>{currentDate}</p>
+          <p>{currentTime}</p>
+        </div>
       <h2 className="text-3xl font-bold text-center text-green-700 mb-6">
         Predicted Condition
       </h2>
@@ -185,10 +189,7 @@ const NewTest: React.FC = () => {
           )}
         </div>
       </div>
-
-      <p className="text-sm text-gray-600 mb-1">Date: {currentDate}</p>
-      <p className="text-sm text-gray-600 mb-4">Time: {currentTime}</p>
-
+     
       <div className="flex justify-center">
         <button
           onClick={handleDone}

@@ -76,7 +76,7 @@ const TestResultsPage: React.FC = () => {
           </div>
         </div>
         <button
-          className="bg-secondary hover:bg-secondary-dark text-white py-2 px-4 rounded-lg"
+          className="bg-secondary hover:bg-secondary-dark text-white py-2 px-1 rounded-lg"
           onClick={() => navigate("/test")}
         >
           Start New Test
@@ -127,7 +127,7 @@ const TestResultsPage: React.FC = () => {
 
       {/* Modal for Test Details */}
       {isModalOpen && selectedTest && (
-        <div className="fixed inset-0 flex justify-center items-center bg-gray-900 bg-opacity-50 z-50">
+        <div className="fixed inset-0 flex justify-center items-center bg-gray-900 bg-opacity-50 z-50 p-2">
           <div className="bg-white p-8 rounded-2xl max-w-lg w-full shadow-lg">
             <h3 className="text-2xl font-bold text-center text-green-700 mb-4">
               Predicted Condition
