@@ -14,6 +14,7 @@ export interface Test {
   date: string;
   time: string;
   symptoms: string[];
+  prediction: string;
 }
 
 // Define the structure for UserProfile

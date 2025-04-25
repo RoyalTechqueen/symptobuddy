@@ -125,38 +125,46 @@ const TestResultsPage: React.FC = () => {
       </div>
 
       {/* Modal for Test Details */}
-      {isModalOpen && selectedTest && (
-        <div className="fixed inset-0 flex justify-center items-center bg-gray-900 bg-opacity-50">
-          <div className="bg-white p-8 rounded-lg max-w-lg w-full">
-            <h3 className="text-xl font-semibold mb-4 text-center">
-              Test Details
-            </h3>
-            <div className="flex justify-between mb-4">
-              <div>
-                <p><strong>Date:</strong> {selectedTest.date}</p>
-                <p><strong>Time:</strong> {selectedTest.time}</p>
-              </div>
-            </div>
-            <p><strong>Symptoms:</strong></p>
-            <ul className="list-disc pl-5 mb-4">
-              {selectedTest.symptoms.map((symptom, idx) => (
-                <li key={idx}>{symptom}</li>
-              ))}
-            </ul>
-            <div className="flex justify-end">
-              <button
-                className="bg-secondary hover:bg-secondary-dark text-white py-2 px-4 rounded-lg"
-                onClick={() => {
-                  setIsModalOpen(false);
-                  setSelectedTest(null);
-                }}
-              >
-                OK
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Modal for Test Details */}
+{isModalOpen && selectedTest && (
+  <div className="fixed inset-0 flex justify-center items-center bg-gray-900 bg-opacity-50 z-50">
+    <div className="bg-white p-8 rounded-2xl max-w-lg w-full shadow-lg">
+      <h3 className="text-2xl font-bold text-center text-green-700 mb-4">
+        Predicted Condition
+      </h3>
+      <p className="text-2xl font-extrabold text-center text-black mb-6">
+        {selectedTest.prediction || "N/A"}
+      </p>
+
+      <div className="flex justify-between text-sm text-gray-700 mb-4">
+        <p><strong>Date:</strong> {selectedTest.date}</p>
+        <p><strong>Time:</strong> {selectedTest.time}</p>
+      </div>
+
+      <div className="mb-4">
+        <p className="font-semibold mb-2">Symptoms Entered:</p>
+        <ul className="list-disc pl-5 text-gray-700">
+          {selectedTest.symptoms.map((symptom, idx) => (
+            <li key={idx}>{symptom}</li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="flex justify-center">
+        <button
+          className="bg-secondary hover:bg-secondary-dark text-white py-2 px-6 rounded-md"
+          onClick={() => {
+            setIsModalOpen(false);
+            setSelectedTest(null);
+          }}
+        >
+          OK
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 };

@@ -1,34 +1,60 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import numpy as np
 import tensorflow as tf
 import joblib
 
-# Load the trained model and label encoder
-model = tf.keras.models.load_model('disease_prediction_model.h5')
-label_encoder = joblib.load('label_encoder.pkl')
-
 # Create FastAPI app
 app = FastAPI()
 
-# Define the input data format for symptoms
-class Symptoms(BaseModel):
-    symptoms: list  # List of selected symptoms (1 for present, 0 for absent)
+# CORS middleware setup
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Frontend origin
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-# Define the prediction endpoint
+# Load the trained model and label encoder
+model = tf.keras.models.load_model("disease_prediction_model.h5")
+label_encoder = joblib.load("label_encoder.pkl")
+
+# Define symptom order based on training dataset
+symptom_order = [
+    "Fever",
+    "Chills",
+    "Headache",
+    "Muscle Pain",
+    "Nausea",
+    "Vomiting",
+    "Fatigue",
+    "Diarrhoea",
+    "Phlegm",
+    "Throat Irritation",
+]
+
+# Define the input data format
+class Symptoms(BaseModel):
+    symptoms: list[str]
+
+# Prediction route
 @app.post("/predict")
 async def predict(symptoms: Symptoms):
-    # Convert the symptoms to numpy array format
-    symptom_array = np.array(symptoms.symptoms).reshape(1, -1)
+    try:
+        # Create binary vector from symptom list
+        input_vector = [1 if symptom in symptoms.symptoms else 0 for symptom in symptom_order]
 
-    # Make the prediction
-    prediction = model.predict(symptom_array)
+        # Convert to NumPy array and reshape for model input
+        input_array = np.array([input_vector])
 
-    # Get the predicted class index (numeric value)
-    predicted_class_index = np.argmax(prediction, axis=1)[0]
+        # Make prediction
+        prediction = model.predict(input_array)
+        predicted_index = np.argmax(prediction)
+        predicted_disease = label_encoder.inverse_transform([predicted_index])[0]
 
-    # Decode the predicted numeric class back to the disease label
-    predicted_disease = label_encoder.inverse_transform([predicted_class_index])[0]
+        return {"predicted_disease": predicted_disease}
 
-    # Return the predicted disease
-    return {"predicted_disease": predicted_disease}
+    except Exception as e:
+        return {"error": str(e)}

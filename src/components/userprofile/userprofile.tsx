@@ -127,7 +127,7 @@ const ProfilePage: React.FC = () => {
           onClick={handleSubmit}
           className="w-full bg-primary text-white py-2 rounded-md hover:bg-green-600 focus:ring focus:ring-green-300"
         >
-          {isReturningUser ? "Begin Test" : "Begin Test"}
+          {isReturningUser ? "Begin Test" : "Go to Home"}
         </button>
       </form>
     </div>

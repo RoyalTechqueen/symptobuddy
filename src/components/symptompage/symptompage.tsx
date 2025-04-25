@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from "react";
-import * as tf from "@tensorflow/tfjs"; // Import TensorFlow.js
 import useStore from "../../store/store";
 import { useNavigate } from "react-router-dom";
 import { FaAngleLeft } from "react-icons/fa";
 
 const NewTest: React.FC = () => {
-  const [model, setModel] = useState<tf.LayersModel | null>(null);
   const [currentDate, setCurrentDate] = useState<string>("");
   const [currentTime, setCurrentTime] = useState<string>("");
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
   const [showModal, setShowModal] = useState(false);
-  const [prediction, setPrediction] = useState<string>(""); // Store model prediction
+  const [prediction, setPrediction] = useState<string>("");
+
   const { user, setTests } = useStore();
   const navigate = useNavigate();
 
@@ -27,22 +26,7 @@ const NewTest: React.FC = () => {
     "Throat Irritation",
   ];
 
-  // Load the ML model on component mount
-  useEffect(() => {
-    const loadModel = async () => {
-      try {
-        const loadedModel = await tf.loadLayersModel("/symptobuddy_model.json"); // Change path if hosted online
-        setModel(loadedModel);
-        console.log("Model loaded successfully!");
-      } catch (error) {
-        console.error("Error loading model:", error);
-      }
-    };
-
-    loadModel();
-  }, []);
-
-  // Get the current date and time
+  // Set current date and time
   useEffect(() => {
     const now = new Date();
     setCurrentDate(now.toLocaleDateString());
@@ -51,42 +35,40 @@ const NewTest: React.FC = () => {
     );
   }, []);
 
-  // Handle checkbox selection
   const handleCheckboxChange = (symptom: string) => {
-    setSelectedSymptoms((prevSymptoms) =>
-      prevSymptoms.includes(symptom)
-        ? prevSymptoms.filter((s) => s !== symptom)
-        : [...prevSymptoms, symptom]
+    setSelectedSymptoms((prev) =>
+      prev.includes(symptom)
+        ? prev.filter((s) => s !== symptom)
+        : [...prev, symptom]
     );
   };
 
-  // Convert symptoms into model-friendly format
-  const preprocessSymptoms = () => {
-    return symptomsList.map((symptom) =>
-      selectedSymptoms.includes(symptom) ? 1 : 0
-    );
-  };
-
-  // Make predictions using the model
+  // Call FastAPI backend to get prediction
   const handleCheckResults = async () => {
-    if (!model) {
-      alert("Model is still loading...");
-      return;
+    try {
+      const response = await fetch("http://localhost:8000/predict", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          symptoms: selectedSymptoms,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setPrediction(data.predicted_disease);
+      setShowModal(true);
+    } catch (error) {
+      console.error("Error during prediction:", error);
+      alert("An error occurred while getting the prediction.");
     }
-
-    const inputTensor = tf.tensor([preprocessSymptoms()]);
-    const predictionTensor = model.predict(inputTensor) as tf.Tensor;
-    const predictionArray = await predictionTensor.data();
-
-    const conditions = ["Cold", "Flu", "COVID-19", "Allergy"]; // Example labels
-    const predictedCondition =
-      conditions[predictionArray.indexOf(Math.max(...predictionArray))];
-
-    setPrediction(predictedCondition);
-    setShowModal(true);
   };
 
-  // Save test result
   const handleDone = () => {
     const newTest = {
       id: Date.now().toString(),
@@ -103,13 +85,14 @@ const NewTest: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-green-100 flex flex-col items-center justify-center">
-        <div className="w-full max-w-4xl flex items-center justify-center px-4 mt-4">
+      <div className="w-full max-w-4xl flex items-center justify-center px-4 mt-4">
         <img
           src="/logo.jpg"
           alt="SymptoBuddy Logo"
           className="w-48 h-48 sm:w-36 sm:h-36 lg:w-52 lg:h-52"
         />
       </div>
+
       <header className="w-full max-w-4xl flex items-center justify-between px-4 mt-4">
         <div
           onClick={() => navigate("/testresult")}
@@ -123,7 +106,9 @@ const NewTest: React.FC = () => {
         </div>
       </header>
 
-      <h1 className="sm:text-3xl text-lg  font-bold text-center mx-auto">Start New Test</h1>
+      <h1 className="sm:text-3xl text-lg font-bold text-center mx-auto">
+        Start New Test
+      </h1>
 
       <form className="w-full max-w-4xl mt-2 px-4 space-y-4 mx-auto">
         <div>
@@ -173,28 +158,49 @@ const NewTest: React.FC = () => {
         </div>
       </form>
 
-      {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
-          <div className="bg-white p-6 rounded-lg w-96">
-            <h2 className="text-2xl font-bold mb-4">Test Results</h2>
-            <p className="text-lg">Date: {currentDate}</p>
-            <p className="text-lg">Time: {currentTime}</p>
-            <p className="text-lg">Symptoms: {selectedSymptoms.join(", ")}</p>
-            <p className="text-lg font-semibold">
-              Predicted Condition: {prediction || "N/A"}
-            </p>
-            <div className="mt-4 flex justify-end">
-              <button
-                onClick={handleDone}
-                className="px-4 py-2 bg-green-600 text-white rounded-md"
+  <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
+    <div className="bg-white p-6 rounded-2xl w-full max-w-lg shadow-lg">
+      <h2 className="text-3xl font-bold text-center text-green-700 mb-6">
+        Predicted Condition
+      </h2>
+      <p className="text-2xl font-extrabold text-center text-black mb-4">
+        {prediction || "N/A"}
+      </p>
+
+      <div className="mb-4">
+        <p className="text-md font-semibold text-gray-700">Selected Symptoms:</p>
+        <div className="flex flex-wrap mt-2">
+          {selectedSymptoms.length > 0 ? (
+            selectedSymptoms.map((symptom, index) => (
+              <span
+                key={index}
+                className="inline-block px-3 py-1 m-1 bg-green-100 text-green-800 border border-green-500 rounded-lg text-sm font-medium"
               >
-                Done
-              </button>
-            </div>
-          </div>
+                {symptom}
+              </span>
+            ))
+          ) : (
+            <span className="text-sm text-gray-500">No symptoms selected</span>
+          )}
         </div>
-      )}
+      </div>
+
+      <p className="text-sm text-gray-600 mb-1">Date: {currentDate}</p>
+      <p className="text-sm text-gray-600 mb-4">Time: {currentTime}</p>
+
+      <div className="flex justify-center">
+        <button
+          onClick={handleDone}
+          className="px-6 py-2 bg-green-600 text-white text-sm font-semibold rounded-md shadow hover:bg-green-700"
+        >
+          Done
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 };

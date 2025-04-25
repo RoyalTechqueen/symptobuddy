@@ -16,6 +16,7 @@ interface Test {
   date: string;
   time: string;
   symptoms: string[];
+  prediction: string;
 }
 
 // Open the IndexedDB database
