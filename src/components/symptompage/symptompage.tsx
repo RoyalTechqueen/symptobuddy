@@ -16,14 +16,15 @@ const NewTest: React.FC = () => {
 
   const symptomsList = [
     "Fever",
-    "Cough",
+    "Chills",
     "Headache",
+    "Muscle Pain",
+    "Nausea",
+    "Vomiting",
     "Fatigue",
-    "Runny Nose",
-    "Stomach Ache",
-    "Sore Throat",
-    "Body Ache",
-    "Sneezing",
+    "Diarrhoea",
+    "Phlegm",
+    "Throat Irritation",
   ];
 
   // Load the ML model on component mount
