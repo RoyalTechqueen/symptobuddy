@@ -46,7 +46,8 @@ const NewTest: React.FC = () => {
   // Call FastAPI backend to get prediction
   const handleCheckResults = async () => {
     try {
-      const response = await fetch("http://localhost:8000/predict", {
+      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
+      const response = await fetch(`${apiUrl}/predict`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -55,11 +56,11 @@ const NewTest: React.FC = () => {
           symptoms: selectedSymptoms,
         }),
       });
-
+  
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
+  
       const data = await response.json();
       setPrediction(data.predicted_disease);
       setShowModal(true);
@@ -68,6 +69,7 @@ const NewTest: React.FC = () => {
       alert("An error occurred while getting the prediction.");
     }
   };
+  
 
   const handleDone = () => {
     const newTest = {
