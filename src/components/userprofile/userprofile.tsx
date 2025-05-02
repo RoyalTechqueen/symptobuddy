@@ -2,12 +2,18 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getUserProfile, saveUserProfile } from "../../store/db";
 
-
 interface UserProfile {
   firstName: string;
   lastName: string;
   dateOfBirth: string;
   gender: string;
+}
+
+// Define the type for form errors
+interface FormErrors {
+  firstName?: string;
+  lastName?: string;
+  dateOfBirth?: string;
 }
 
 const ProfilePage: React.FC = () => {
@@ -17,6 +23,7 @@ const ProfilePage: React.FC = () => {
   const [dateOfBirth, setDateOfBirth] = useState<string>("");
   const [gender, setGender] = useState<"Male" | "Female">("Male");
   const [isReturningUser, setIsReturningUser] = useState<boolean>(false);
+  const [formErrors, setFormErrors] = useState<FormErrors>({}); // Updated to use FormErrors type
 
   // Check if user profile exists
   useEffect(() => {
@@ -29,24 +36,48 @@ const ProfilePage: React.FC = () => {
     checkProfile();
   }, []);
 
-  const handleSubmit = async () => {
-    if (!firstName || !lastName || !dateOfBirth) {
-      alert("Please fill out all fields.");
-      return;
+  const validateForm = () => {
+    const errors: FormErrors = {}; // Use FormErrors type
+
+    if (!firstName || !/^[A-Za-z]+$/.test(firstName)) {
+      errors.firstName = "First name should contain only letters.";
     }
 
+    if (!lastName || !/^[A-Za-z]+$/.test(lastName)) {
+      errors.lastName = "Last name should contain only letters.";
+    }
+
+    if (!dateOfBirth) {
+      errors.dateOfBirth = "Date of birth is required.";
+    } else {
+      const dob = new Date(dateOfBirth);
+      const today = new Date();
+      if (dob >= today) {
+        errors.dateOfBirth = "Date of birth must be in the past.";
+      }
+    }
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleSubmit = async () => {
+    if (!validateForm()) return;
+
     const existingProfile: UserProfile | null = await getUserProfile();
+    const newProfile = { firstName, lastName, dateOfBirth, gender };
+
     if (
       existingProfile &&
       (existingProfile.firstName !== firstName ||
         existingProfile.lastName !== lastName ||
         existingProfile.dateOfBirth !== dateOfBirth)
     ) {
-      await saveUserProfile({ firstName, lastName, dateOfBirth, gender }); 
-      navigate("/test"); 
+      await saveUserProfile(newProfile);
+      navigate("/test");
     } else {
-      await saveUserProfile({ firstName, lastName, dateOfBirth, gender });
-      navigate("/testresult"); 
+      await saveUserProfile(newProfile);
+      navigate("/testresult");
     }
   };
 
@@ -59,7 +90,6 @@ const ProfilePage: React.FC = () => {
           className="w-48 h-48 sm:w-36 sm:h-36 lg:w-52 lg:h-52"
         />
       </div>
-
 
       {/* Form to collect user information */}
       <form className="w-full max-w-4xl mt-8 px-4 space-y-4 flex-grow">
@@ -76,6 +106,9 @@ const ProfilePage: React.FC = () => {
             placeholder="John"
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
           />
+          {formErrors.firstName && (
+            <p className="text-red-500 text-sm mt-1">{formErrors.firstName}</p>
+          )}
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700">
@@ -90,6 +123,9 @@ const ProfilePage: React.FC = () => {
             placeholder="Doe"
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
           />
+          {formErrors.lastName && (
+            <p className="text-red-500 text-sm mt-1">{formErrors.lastName}</p>
+          )}
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700">
@@ -103,6 +139,9 @@ const ProfilePage: React.FC = () => {
             }
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
           />
+          {formErrors.dateOfBirth && (
+            <p className="text-red-500 text-sm mt-1">{formErrors.dateOfBirth}</p>
+          )}
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700">
