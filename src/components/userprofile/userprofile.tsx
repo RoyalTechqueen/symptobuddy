@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getUserProfile, saveUserProfile } from "../../store/db"; // Import IndexedDB functions
+import { getUserProfile, saveUserProfile } from "../../store/db";
 
-// Define UserProfile type
+
 interface UserProfile {
   firstName: string;
   lastName: string;
@@ -35,21 +35,18 @@ const ProfilePage: React.FC = () => {
       return;
     }
 
-    // Get existing profile
     const existingProfile: UserProfile | null = await getUserProfile();
-
-    // If a different user is detected, clear old data
     if (
       existingProfile &&
       (existingProfile.firstName !== firstName ||
         existingProfile.lastName !== lastName ||
         existingProfile.dateOfBirth !== dateOfBirth)
     ) {
-      await saveUserProfile({ firstName, lastName, dateOfBirth, gender }); // Save new user
-      navigate("/test"); // Redirect new user to homepage
+      await saveUserProfile({ firstName, lastName, dateOfBirth, gender }); 
+      navigate("/test"); 
     } else {
       await saveUserProfile({ firstName, lastName, dateOfBirth, gender });
-      navigate("/testresult"); // Redirect existing user to test results
+      navigate("/testresult"); 
     }
   };
 

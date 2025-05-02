@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import useStore, { Test } from "../../store/store";
 import { useNavigate } from "react-router-dom";
 
-// Helper function to calculate age from DOB
+//  function to calculate age from DOB
 const calculateAge = (dob: string): number => {
   if (!dob) return 0;
   const birthDate = new Date(dob);
@@ -27,7 +27,7 @@ const TestResultsPage: React.FC = () => {
   const tests = useStore((state) => state.tests);
   const loadUserProfile = useStore((state) => state.loadUserProfile);
   const loadTests = useStore((state) => state.loadTests);
-  const deleteTest = useStore((state) => state.deleteTest); // Assuming you have a deleteTest method in your store
+  const deleteTest = useStore((state) => state.deleteTest);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTest, setSelectedTest] = useState<Test | null>(null);
@@ -47,9 +47,9 @@ const TestResultsPage: React.FC = () => {
       "Are you sure you want to delete this test history?"
     );
     if (confirmed && selectedTest?.id) {
-      deleteTest(selectedTest.id); // Delete the test using Zustand store action
-      setIsModalOpen(false); // Close the modal after deletion
-      setSelectedTest(null); // Clear the selected test
+      deleteTest(selectedTest.id);
+      setIsModalOpen(false);
+      setSelectedTest(null);
     }
   };
 
@@ -94,8 +94,12 @@ const TestResultsPage: React.FC = () => {
               >
                 <div className="flex justify-between">
                   <div>
-                    <p className="text-gray-700 font-medium">Date: {test.date}</p>
-                    <p className="text-gray-700 font-medium">Time: {test.time}</p>
+                    <p className="text-gray-700 font-medium">
+                      Date: {test.date}
+                    </p>
+                    <p className="text-gray-700 font-medium">
+                      Time: {test.time}
+                    </p>
                   </div>
                   <button
                     className="text-yellow-600 font-semibold hover:underline"
@@ -108,12 +112,29 @@ const TestResultsPage: React.FC = () => {
                   </button>
                 </div>
                 <div>
-                  <p className="font-semibold text-gray-700">Symptoms:</p>
-                  <ul className="list-disc pl-5">
-                    {test.symptoms.map((symptom, idx) => (
-                      <li key={idx} className="text-gray-600">{symptom}</li>
-                    ))}
-                  </ul>
+                  <div className="px-3 py-1 m-1 text-green-800 border border-green-500 rounded-lg text-sm font-medium">
+                    <h3 className="text-lg font-medium text-center text-black">
+                      Predicted Condition:
+                    </h3>
+                    <p className="text-2xl font-extrabold text-center text-green-700">
+                      {test.prediction || "N/A"}
+                    </p>
+                  </div>
+                  <div className="px-3 py-1 m-1 text-green-800 border border-green-500 rounded-lg text-sm font-medium">
+                    <p className="font-semibold text-gray-700 text-center">
+                      Symptoms Entered:
+                    </p>
+                    <h3 className="text-center">
+                      {test.symptoms.map((symptom, idx) => (
+                        <span
+                          key={idx}
+                          className=" p-1 inline-block text-green-800 text-sm font-medium"
+                        >
+                          {symptom}
+                        </span>
+                      ))}
+                    </h3>
+                  </div>
                 </div>
               </div>
             ))}
@@ -129,16 +150,21 @@ const TestResultsPage: React.FC = () => {
       {isModalOpen && selectedTest && (
         <div className="fixed inset-0 flex justify-center items-center bg-gray-900 bg-opacity-50 z-50 p-2">
           <div className="bg-white p-8 rounded-2xl max-w-lg w-full shadow-lg">
-            <h3 className="text-2xl font-bold text-center text-green-700 mb-4">
-              Predicted Condition
-            </h3>
-            <p className="text-2xl font-extrabold text-center text-black mb-6">
-              {selectedTest.prediction || "N/A"}
-            </p>
-
             <div className="flex justify-between text-sm text-gray-700 mb-4">
-              <p><strong>Date:</strong> {selectedTest.date}</p>
-              <p><strong>Time:</strong> {selectedTest.time}</p>
+              <p>
+                <strong>Date:</strong> {selectedTest.date}
+              </p>
+              <p>
+                <strong>Time:</strong> {selectedTest.time}
+              </p>
+            </div>
+            <div className="px-3 py-1 m-1 mt-2 text-green-800 border border-green-500 rounded-lg text-sm font-medium">
+              <h3 className="text-xl font-medium text-center text-black">
+                Predicted Condition
+              </h3>
+              <p className="text-2xl font-extrabold text-center text-green-700">
+                {selectedTest.prediction || "N/A"}
+              </p>
             </div>
 
             <div className="mb-4">
