@@ -47,7 +47,7 @@ const App: React.FC = () => {
 
   return (
     <Router>
-      <div style={{ textAlign: "center", padding: "10px" }}>
+      <div>
         {deferredPrompt && (
           <button
             onClick={handleInstall}
@@ -55,11 +55,11 @@ const App: React.FC = () => {
           >
             Install SymptoBuddy
           </button>
-        )}
+        )}iy
       </div>
       <Routes>
-        <Route path="/" element={<UserProfile />} />
-        <Route path="/homepage" element={<HomePage />} />
+        <Route path="/" element={<HomePage />} />
+        <Route path="/userprofile" element={<UserProfile />} />
         <Route path="/test" element={<NewTest />} />
         <Route path="/testresult" element={<TestResultsPage />} />
       </Routes>
