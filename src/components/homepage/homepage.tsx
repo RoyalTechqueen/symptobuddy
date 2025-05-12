@@ -107,8 +107,8 @@ const Homepage: React.FC = () => {
           </div>
           <div className="p-4 border rounded-lg shadow hover:shadow-md transition-all">
             <div className="text-3xl mb-2">📋</div>
-            <h3 className="font-bold text-lg"> 4. View Result</h3>
-            <p className="text-sm text-gray-600">See your possible condition.</p>
+            <h3 className="font-bold text-lg"> 4. View Result and Recommendations</h3>
+            <p className="text-sm text-gray-600">See your possible condition and disease information.</p>
           </div>
         </div>
       </div>

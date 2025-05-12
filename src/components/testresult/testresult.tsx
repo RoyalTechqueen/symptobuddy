@@ -21,8 +21,6 @@ const calculateAge = (dob: string): number => {
 
 const TestResultsPage: React.FC = () => {
   const navigate = useNavigate();
-
-  // Zustand store
   const user = useStore((state) => state.user);
   const tests = useStore((state) => state.tests);
   const loadUserProfile = useStore((state) => state.loadUserProfile);
@@ -148,9 +146,9 @@ const TestResultsPage: React.FC = () => {
 
       {/* Modal for Test Details */}
       {isModalOpen && selectedTest && (
-        <div className="fixed inset-0 flex justify-center items-center bg-gray-900 bg-opacity-50 z-50 p-2">
-          <div className="bg-white p-8 rounded-2xl max-w-lg w-full shadow-lg">
-            <div className="flex justify-between text-sm text-gray-700 mb-4">
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50 p-3">
+          <div className="bg-white p-6 rounded-2xl w-full max-w-lg shadow-lg max-h-[85vh] overflow-y-auto">
+            <div className="text-black mb-2 flex items-center justify-between">
               <p>
                 <strong>Date:</strong> {selectedTest.date}
               </p>
@@ -169,10 +167,52 @@ const TestResultsPage: React.FC = () => {
 
             <div className="mb-4">
               <p className="font-semibold mb-2">Symptoms Entered:</p>
-              <ul className="list-disc pl-5 text-gray-700">
-                {selectedTest.symptoms.map((symptom, idx) => (
-                  <li key={idx}>{symptom}</li>
-                ))}
+
+              {selectedTest.symptoms.map((symptom, idx) => (
+                <span
+                  key={idx}
+                  className="inline-block px-3 py-1 m-1 bg-green-100 text-green-800 border border-green-500 rounded-lg text-sm font-medium"
+                >
+                  {symptom}
+                </span>
+              ))}
+            </div>
+
+            <div className="mb-4 space-y-2">
+              <p className="text-xl font-bold text-center text-green-700 mb-6">
+                Disease Information:
+              </p>
+              <h3 className="text-lg font-bold text-left text-green-700 mb-6">
+                Overview:
+              </h3>
+              <p>{selectedTest.diseaseInfo?.overview || "N/A"}</p>
+              <h3 className="text-lg font-bold text-left text-green-700 mb-6">
+                Causes:
+              </h3>
+              <p>{selectedTest.diseaseInfo?.causes || "N/A"}</p>
+              <h3 className="text-lg font-bold text-left text-green-700 mb-6">
+                Symptoms:
+              </h3>
+              <ul className="list-disc ml-5">
+                {selectedTest.diseaseInfo?.symptoms ? (
+                  selectedTest.diseaseInfo?.symptoms
+                    .split(", ")
+                    .map((step, index) => <li key={index}>{step}</li>)
+                ) : (
+                  <li>No next steps information available</li>
+                )}
+              </ul>
+              <h3 className="text-lg font-bold text-left text-green-700 mb-6">
+                Next Steps:
+              </h3>
+              <ul className="list-disc ml-5">
+                {selectedTest.diseaseInfo?.next_steps ? (
+                  selectedTest.diseaseInfo?.next_steps
+                    .split(", ")
+                    .map((step, index) => <li key={index}>{step}</li>)
+                ) : (
+                  <li>No next steps information available</li>
+                )}
               </ul>
             </div>
 

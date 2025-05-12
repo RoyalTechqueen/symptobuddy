@@ -9,14 +9,22 @@ interface UserProfile {
   gender: string;
 }
 
+interface DiseaseInfo {
+  overview: string;
+  causes: string;
+  symptoms: string;
+  next_steps: string;
+}
+
 interface Test {
   id: string;
-  userId: string; // Associate tests with a specific user
+  userId: string;
   name: string;
   date: string;
   time: string;
   symptoms: string[];
   prediction: string;
+  diseaseInfo?: DiseaseInfo;
 }
 
 // Open the IndexedDB database
@@ -35,7 +43,7 @@ const dbPromise = openDB("my-pwa-db", 1, {
 export const saveUserProfile = async (profile: Omit<UserProfile, "id">) => {
   try {
     const db = await dbPromise;
-    await db.put("userProfile", { id: "user", ...profile }); // Store as a single entry
+    await db.put("userProfile", { id: "user", ...profile });
   } catch (error) {
     console.error("Failed to save user profile:", error);
   }
@@ -52,12 +60,11 @@ export const getUserProfile = async (): Promise<UserProfile | null> => {
   }
 };
 
-// Save Test History to IndexedDB
-export const saveTestHistory = async (test: Omit<Test, "id" | "userId">, userId: string) => {
+// Save Test History (including diseaseInfo) to IndexedDB
+export const saveTestHistory = async (test: Test) => {
   try {
     const db = await dbPromise;
-    const newTest = { id: Date.now().toString(), userId, ...test };
-    await db.put("testHistory", newTest);
+    await db.put("testHistory", test);
   } catch (error) {
     console.error("Failed to save test history:", error);
   }
@@ -81,10 +88,7 @@ export const deleteTestHistory = async (testId: string) => {
     const db = await dbPromise;
     const transaction = db.transaction("testHistory", "readwrite");
     const store = transaction.objectStore("testHistory");
-
-    // Delete the test with the specified testId
     store.delete(testId);
-
     return new Promise((resolve, reject) => {
       transaction.oncomplete = () => resolve(true);
       transaction.onerror = (err) => reject(err);

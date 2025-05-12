@@ -39,12 +39,13 @@ const ProfilePage: React.FC = () => {
   const validateForm = () => {
     const errors: FormErrors = {}; // Use FormErrors type
 
-    if (!firstName || !/^[A-Za-z]+$/.test(firstName)) {
-      errors.firstName = "First name should contain only letters.";
+    if (!firstName || /\d/.test(firstName)) {
+      errors.firstName = "First name can contain only letters.";
     }
 
-    if (!lastName || !/^[A-Za-z]+$/.test(lastName)) {
-      errors.lastName = "Last name should contain only letters.";
+    if (!lastName ||/\d/.test(lastName)
+) {
+      errors.lastName = "Last name can contain only letters.";
     }
 
     if (!dateOfBirth) {
@@ -140,7 +141,9 @@ const ProfilePage: React.FC = () => {
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500"
           />
           {formErrors.dateOfBirth && (
-            <p className="text-red-500 text-sm mt-1">{formErrors.dateOfBirth}</p>
+            <p className="text-red-500 text-sm mt-1">
+              {formErrors.dateOfBirth}
+            </p>
           )}
         </div>
         <div>
