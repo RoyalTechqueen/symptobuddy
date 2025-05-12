@@ -182,6 +182,7 @@ const TestResultsPage: React.FC = () => {
               <p className="text-xl font-bold text-center text-green-700 mb-6">
                 Disease Information:
               </p>
+              <h3 className="text-red-500"><strong>NOTE:</strong> Disease Information was generated from <strong>Mayo Clinic</strong>.</h3>
               <h3 className="text-lg font-bold text-left text-green-700 mb-6">
                 Overview:
               </h3>
@@ -214,6 +215,7 @@ const TestResultsPage: React.FC = () => {
                   <li>No next steps information available</li>
                 )}
               </ul>
+             
             </div>
 
             <div className="flex justify-center space-x-4">
