@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import numpy as np
 import tensorflow as tf
-import joblib
+import json
 
 # Create FastAPI app
 app = FastAPI()
@@ -18,21 +18,39 @@ app.add_middleware(
 )
 
 # Load the trained model and label encoder
-model = tf.keras.models.load_model("disease_prediction_model.h5")
-label_encoder = joblib.load("label_encoder.pkl")
+
+model = tf.keras.models.load_model("symptobuddy_v2.h5")
+
+with open("disease_mapping.json", "r") as f:
+    disease_mapping = json.load(f)
 
 # Define symptom order based on training dataset
 symptom_order = [
     "Fever",
+    "Persistent Fever",
     "Chills",
     "Headache",
-    "Muscle Pain",
+    "Fatigue",
+    "Body Ache",
+    "Loss of Appetite",
+    "Sweating",
+    "Cough",
+    "Runny Nose",
+    "Nasal Congestion",
+    "Sneezing",
+    "Sore Throat",
+    "Difficulty Breathing",
     "Nausea",
     "Vomiting",
-    "Fatigue",
-    "Diarrhoea",
-    "Phlegm",
-    "Throat Irritation",
+    "Diarrhea",
+    "Abdominal Pain",
+    "Dehydration",
+    "Red Eyes",
+    "Watery Eyes",
+    "Eye Discharge",
+    "Rash",
+    "Itching",
+    "Skin Blisters",
 ]
 
 # Disease information (overview, causes, symptoms, next steps)
@@ -98,7 +116,7 @@ disease_info = {
             "Consult a healthcare provider if symptoms last longer than 10 days or worsen."
         ]
     },
-    "diarrhoea": {
+    "diarrhea": {
         "overview": "Diarrhea is characterized by frequent, loose, watery stools, which can lead to dehydration and other complications.",
         "causes": [
             "Infections from bacteria (e.g., Salmonella, E. coli), viruses (e.g., norovirus), or parasites.",
@@ -177,7 +195,119 @@ disease_info = {
             "Use over-the-counter medications to alleviate symptoms.",
             "Seek medical attention if symptoms worsen or you have difficulty breathing."
         ]
-    }
+    },
+    "sinusitis": {
+    "overview": "Sinusitis is inflammation or swelling of the tissue lining the sinuses, often caused by infections, allergies, or other conditions that block the sinuses.",
+    "causes": [
+        "Viral infections such as the common cold.",
+        "Bacterial infections.",
+        "Allergies that cause nasal inflammation.",
+        "Nasal polyps or structural problems in the nose."
+    ],
+    "symptoms": [
+        "Facial pain or pressure",
+        "Stuffy or blocked nose",
+        "Thick nasal discharge",
+        "Reduced sense of smell and taste",
+        "Headache",
+        "Cough"
+    ],
+    "next_steps": [
+        "Rest and drink plenty of fluids.",
+        "Use saline nasal sprays or nasal irrigation as recommended.",
+        "Seek medical attention if symptoms last longer than 10 days or become severe.",
+        "Follow prescribed treatment if a bacterial infection is diagnosed."
+    ]
+},
+
+"food_poisoning": {
+    "overview": "Food poisoning is an illness caused by eating contaminated food or drinking contaminated water. Symptoms usually develop within hours to days after exposure.",
+    "causes": [
+        "Bacteria such as Salmonella, E. coli, or Listeria.",
+        "Viruses such as norovirus.",
+        "Parasites in contaminated food or water.",
+        "Toxins produced by certain bacteria."
+    ],
+    "symptoms": [
+        "Nausea and vomiting",
+        "Diarrhea",
+        "Stomach cramps",
+        "Fever",
+        "Weakness and fatigue"
+    ],
+    "next_steps": [
+        "Drink plenty of fluids to prevent dehydration.",
+        "Rest and avoid foods that may worsen symptoms.",
+        "Seek medical care if symptoms are severe, persistent, or accompanied by signs of dehydration.",
+        "Follow food safety practices to prevent future infections."
+    ]
+},
+
+"conjunctivitis": {
+    "overview": "Conjunctivitis, commonly known as pink eye, is inflammation of the conjunctiva, the thin membrane that covers the white part of the eye and inner eyelid.",
+    "causes": [
+        "Viral infections.",
+        "Bacterial infections.",
+        "Allergic reactions.",
+        "Exposure to irritants such as smoke or chemicals."
+    ],
+    "symptoms": [
+        "Red or pink eyes",
+        "Itchy or burning eyes",
+        "Excessive tearing",
+        "Eye discharge",
+        "Crusting around the eyelids"
+    ],
+    "next_steps": [
+        "Avoid touching or rubbing the eyes.",
+        "Wash hands frequently to prevent spreading the infection.",
+        "Use prescribed eye drops if recommended by a healthcare provider.",
+        "Seek medical attention if vision changes, severe pain, or worsening symptoms occur."
+    ]
+},
+
+"measles": {
+    "overview": "Measles is a highly contagious viral infection that spreads through respiratory droplets. It can lead to serious complications, especially in young children.",
+    "causes": [
+        "Infection with the measles virus.",
+        "Exposure to respiratory droplets from an infected person."
+    ],
+    "symptoms": [
+        "High fever",
+        "Runny nose",
+        "Cough",
+        "Red, watery eyes",
+        "White spots inside the mouth (Koplik spots)",
+        "Red skin rash that spreads across the body"
+    ],
+    "next_steps": [
+        "Seek medical attention if measles is suspected.",
+        "Stay isolated from others to prevent spreading the virus.",
+        "Drink plenty of fluids and get adequate rest.",
+        "Monitor for complications such as difficulty breathing or severe dehydration."
+    ]
+},
+
+"chickenpox": {
+    "overview": "Chickenpox is a highly contagious viral infection caused by the varicella-zoster virus. It is characterized by an itchy rash and flu-like symptoms.",
+    "causes": [
+        "Infection with the varicella-zoster virus.",
+        "Direct contact with an infected person's rash or respiratory droplets."
+    ],
+    "symptoms": [
+        "Itchy rash with fluid-filled blisters",
+        "Fever",
+        "Fatigue",
+        "Loss of appetite",
+        "Headache"
+    ],
+    "next_steps": [
+        "Avoid scratching the blisters to reduce the risk of infection.",
+        "Rest and stay hydrated.",
+        "Stay away from others until all blisters have crusted over.",
+        "Seek medical attention if symptoms become severe or complications develop."
+    ]
+}
 }
 
 # Define the input data format
@@ -189,22 +319,44 @@ class Symptoms(BaseModel):
 async def predict(symptoms: Symptoms):
     try:
         # Create binary vector from symptom list
-        input_vector = [1 if symptom in symptoms.symptoms else 0 for symptom in symptom_order]
+        input_vector = [
+            1 if symptom in symptoms.symptoms else 0
+            for symptom in symptom_order
+        ]
 
-        # Convert to NumPy array and reshape for model input
+        # Convert to NumPy array
         input_array = np.array([input_vector])
 
         # Make prediction
-        prediction = model.predict(input_array)
-        predicted_index = np.argmax(prediction)
-        predicted_disease = label_encoder.inverse_transform([predicted_index])[0]
+        predictions = model.predict(input_array)
 
-        # Normalize predicted label to match dictionary keys
-        normalized_key = predicted_disease.lower().replace(" ", "_")
+        # Get top 3 predictions
+        top_3_indices = np.argsort(predictions[0])[-3:][::-1]
+
+        top_predictions = []
+
+        for idx in top_3_indices:
+            disease = disease_mapping[str(idx)]
+            confidence = float(predictions[0][idx] * 100)
+
+            top_predictions.append({
+                "disease": disease,
+                "confidence": round(confidence, 2)
+            })
+
+        # Use first prediction for disease information
+        primary_disease = top_predictions[0]["disease"]
+
+        normalized_key = (
+            primary_disease.lower()
+            .replace(" ", "_")
+            .replace("-", "_")
+        )
+
         disease_details = disease_info.get(normalized_key, {})
 
         return {
-            "predicted_disease": predicted_disease,
+            "top_predictions": top_predictions,
             "overview": disease_details.get("overview", ""),
             "causes": disease_details.get("causes", []),
             "symptoms": disease_details.get("symptoms", []),

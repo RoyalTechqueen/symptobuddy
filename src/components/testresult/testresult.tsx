@@ -118,21 +118,52 @@ const TestResultsPage: React.FC = () => {
                       {test.prediction || "N/A"}
                     </p>
                   </div>
-                  <div className="px-3 py-1 m-1 text-green-800 border border-green-500 rounded-lg text-sm font-medium">
-                    <p className="font-semibold text-gray-700 text-center">
-                      Symptoms Entered:
-                    </p>
-                    <h3 className="text-center">
-                      {test.symptoms.map((symptom, idx) => (
-                        <span
-                          key={idx}
-                          className=" p-1 inline-block text-green-800 text-sm font-medium"
-                        >
-                          {symptom}
-                        </span>
-                      ))}
-                    </h3>
-                  </div>
+                 {/* Top Predictions */}
+<div className="mb-4">
+  <p className="text-xl font-bold text-center text-green-700 mb-4">
+    Top Predictions
+  </p>
+
+  {test.topPredictions?.length ? (
+    <div className="space-y-2">
+      {test.topPredictions.map((item, index) => (
+        <div
+          key={item.disease}
+          className="flex justify-between items-center p-3 rounded-lg bg-green-50 border"
+        >
+          <div className="font-semibold">
+            {index === 0 && "🥇 "}
+            {index === 1 && "🥈 "}
+            {index === 2 && "🥉 "}
+            {item.disease}
+          </div>
+
+          <div className="font-bold text-green-700">
+            {item.confidence.toFixed(2)}%
+          </div>
+        </div>
+      ))}
+    </div>
+  ) : (
+    <p className="text-center text-gray-500">
+      Top predictions not available for this test.
+    </p>
+  )}
+</div>
+
+{/* Symptoms Entered */}
+<div className="mb-4">
+  <p className="font-semibold mb-2">Symptoms Entered:</p>
+
+  {test.symptoms.map((symptom, idx) => (
+    <span
+      key={idx}
+      className="inline-block px-3 py-1 m-1 bg-green-100 text-green-800 border border-green-500 rounded-lg text-sm font-medium"
+    >
+      {symptom}
+    </span>
+  ))}
+</div>
                 </div>
               </div>
             ))}
@@ -160,9 +191,23 @@ const TestResultsPage: React.FC = () => {
               <h3 className="text-xl font-medium text-center text-black">
                 Predicted Condition
               </h3>
-              <p className="text-2xl font-extrabold text-center text-green-700">
-                {selectedTest.prediction || "N/A"}
-              </p>
+             {selectedTest.topPredictions?.map((item, index) => (
+  <div
+    key={item.disease}
+    className="flex justify-between items-center p-3 rounded-lg bg-green-50 border"
+  >
+    <div className="font-semibold">
+      {index === 0 && "🥇 "}
+      {index === 1 && "🥈 "}
+      {index === 2 && "🥉 "}
+      {item.disease}
+    </div>
+
+    <div className="font-bold text-green-700">
+      {item.confidence.toFixed(2)}%
+    </div>
+  </div>
+))}
             </div>
 
             <div className="mb-4">

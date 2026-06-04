@@ -23,6 +23,10 @@ export interface Test {
   time: string;
   symptoms: string[];
   prediction: string;
+  topPredictions?: {
+    disease: string;
+    confidence: number;
+  }[];
   diseaseInfo?: DiseaseInfo;
 }
 

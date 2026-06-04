@@ -8,7 +8,9 @@ const NewTest: React.FC = () => {
   const [currentTime, setCurrentTime] = useState<string>("");
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
   const [showModal, setShowModal] = useState(false);
-  const [prediction, setPrediction] = useState<string>("");
+  const [topPredictions, setTopPredictions] = useState<
+    { disease: string; confidence: number }[]
+  >([]);
   const [diseaseInfo, setDiseaseInfo] = useState<{
     overview: string;
     causes: string;
@@ -26,24 +28,45 @@ const NewTest: React.FC = () => {
   const { user, setTests } = useStore();
   const navigate = useNavigate();
 
-  const symptomsList = [
-    "Fever",
-    "Chills",
-    "Headache",
-    "Muscle Pain",
-    "Nausea",
-    "Vomiting",
-    "Fatigue",
-    "Diarrhoea",
-    "Phlegm",
-    "Throat Irritation",
-  ];
+  const symptomCategories = {
+    General: [
+      "Fever",
+      "Persistent Fever",
+      "Chills",
+      "Headache",
+      "Fatigue",
+      "Body Ache",
+      "Loss of Appetite",
+      "Sweating",
+    ],
+
+    Respiratory: [
+      "Cough",
+      "Runny Nose",
+      "Nasal Congestion",
+      "Sneezing",
+      "Sore Throat",
+      "Difficulty Breathing",
+    ],
+
+    Digestive: [
+      "Nausea",
+      "Vomiting",
+      "Diarrhea",
+      "Abdominal Pain",
+      "Dehydration",
+    ],
+
+    Eye: ["Red Eyes", "Watery Eyes", "Eye Discharge"],
+
+    Skin: ["Rash", "Itching", "Skin Blisters"],
+  };
 
   useEffect(() => {
     const now = new Date();
     setCurrentDate(now.toLocaleDateString());
     setCurrentTime(
-      now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+      now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     );
   }, []);
 
@@ -51,14 +74,14 @@ const NewTest: React.FC = () => {
     setSelectedSymptoms((prev) =>
       prev.includes(symptom)
         ? prev.filter((s) => s !== symptom)
-        : [...prev, symptom]
+        : [...prev, symptom],
     );
   };
 
   const handleCheckResults = async () => {
     if (selectedSymptoms.length === 0) {
       setWarningMessage(
-        "Please select at least one symptom before checking results."
+        "Please select at least one symptom before checking results.",
       );
       return;
     }
@@ -66,7 +89,9 @@ const NewTest: React.FC = () => {
     setIsLoading(true); // Start loading
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
+      const apiUrl =
+        import.meta.env.VITE_API_URL || "https://symptobuddy.onrender.com";
+      console.log("API URL:", apiUrl);
       const response = await fetch(`${apiUrl}/predict`, {
         method: "POST",
         headers: {
@@ -85,7 +110,8 @@ const NewTest: React.FC = () => {
       console.log("API response:", data); // Check the structure
 
       // Check if we are getting the correct prediction
-      setPrediction(data.predicted_disease || "N/A");
+      setTopPredictions(data.top_predictions || []);
+      console.log("Top Predictions:", data.top_predictions);
 
       // Set disease info based on available data or fallback to "N/A"
       setDiseaseInfo({
@@ -127,8 +153,9 @@ const NewTest: React.FC = () => {
       date: currentDate,
       time: currentTime,
       symptoms: selectedSymptoms,
-      prediction,
-      diseaseInfo, // Include diseaseInfo here
+      prediction: topPredictions[0]?.disease || "N/A",
+      topPredictions,
+      diseaseInfo,
     };
 
     setTests(newTest);
@@ -165,16 +192,29 @@ const NewTest: React.FC = () => {
       <form className="w-full max-w-4xl mt-2 px-4 space-y-4 mx-auto">
         <div>
           <div className="mt-2 bg-white border border-gray-300 rounded-md shadow-lg p-3">
-            {symptomsList.map((symptom: string, index: number) => (
-              <label key={index} className="flex items-center space-x-2 mb-1">
-                <input
-                  type="checkbox"
-                  className="peer"
-                  checked={selectedSymptoms.includes(symptom)}
-                  onChange={() => handleCheckboxChange(symptom)}
-                />
-                <span>{symptom}</span>
-              </label>
+            {Object.entries(symptomCategories).map(([category, symptoms]) => (
+              <div key={category} className="mb-6">
+                <h3 className="text-lg font-bold text-green-700 mb-3">
+                  {category} Symptoms
+                </h3>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {symptoms.map((symptom) => (
+                    <label
+                      key={symptom}
+                      className="flex items-center space-x-2"
+                    >
+                      <input
+                        type="checkbox"
+                        className="peer"
+                        checked={selectedSymptoms.includes(symptom)}
+                        onChange={() => handleCheckboxChange(symptom)}
+                      />
+                      <span>{symptom}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         </div>
@@ -187,7 +227,7 @@ const NewTest: React.FC = () => {
 
         <div>
           <label className="block text-sm font-medium text-gray-700">
-            Selected Symptoms
+            Selected Symptoms ({selectedSymptoms.length})
           </label>
           <div className="mt-1 p-2">
             {selectedSymptoms.length > 0 ? (
@@ -224,11 +264,28 @@ const NewTest: React.FC = () => {
               <p>{currentTime}</p>
             </div>
             <h2 className="text-3xl font-bold text-center text-green-700 mb-6">
-              Predicted Condition
+              Top Predictions
             </h2>
-            <p className="text-2xl font-extrabold text-center text-black mb-4">
-              {prediction || "N/A"}
-            </p>
+
+            <div className="space-y-3 mb-6">
+              {topPredictions.map((item, index) => (
+                <div
+                  key={item.disease}
+                  className="flex justify-between items-center p-3 rounded-lg bg-green-50 border"
+                >
+                  <div className="font-semibold">
+                    {index === 0 && "🥇 "}
+                    {index === 1 && "🥈 "}
+                    {index === 2 && "🥉 "}
+                    {item.disease}
+                  </div>
+
+                  <div className="font-bold text-green-700">
+                    {item.confidence.toFixed(2)}%
+                  </div>
+                </div>
+              ))}
+            </div>
             <div className="mb-4">
               <p className="text-md font-semibold text-gray-700">
                 Selected Symptoms:

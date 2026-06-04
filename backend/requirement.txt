@@ -1,7 +1,6 @@
 fastapi
 uvicorn
-tensorflow
+tensorflow==2.16.1
 numpy
 pydantic
-joblib
-scikit-learn
+h5py
